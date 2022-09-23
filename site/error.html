@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Error</title>
+    {% include "bootstrap_and_favicon.jinja" %}
+    <link rel="stylesheet" href="static/main.css">
+
+</head>
+
+<body>
+    <div class="d-flex justify-content-md-center align-items-center vh-100">
+        <h1>Error</h1>
+    </div>
+    <div class="center solid-border d-flex justify-content-md-center align-items-center vh-100">
+        <p>
+            Looks like there was an error. The error message will be below.<br>
+            {{ message }}<br>
+        </p>
+    </div>
+    <div class="d-flex justify-content-md-center align-items-center vh-100">
+        <a href="/">To Homepage</a>
+    </div>
+
+
+</body>
+
+</html>
