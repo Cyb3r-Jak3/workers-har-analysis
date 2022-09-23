@@ -19,7 +19,7 @@
     "start": "wrangler dev",
     "deploy": "wrangler publish",
     "format": "prettier --write *.{json,js} src/**/*.{js,ts} ",
-    "lint": "eslint --max-warnings=0 src && prettier --check *.{json,js} src/**/*.{js,ts}"
+    "lint": "eslint --max-warnings=0 src/**.ts && prettier --check *.{json,js} src/**/*.{js,ts}"
   },
   "dependencies": {
     "@cloudflare/kv-asset-handler": "^0.2.0",

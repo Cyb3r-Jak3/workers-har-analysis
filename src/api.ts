@@ -1,14 +1,13 @@
 import { Context } from "hono";
-import { GetFileFromKV, hex, JSONResponse } from "./utils";
+import { GetFileFromKV, HandleCachedResponse, hex, JSONResponse } from "./utils";
 import { GenerateQuery, QueryType } from "d1-orm";
 
-const cache = caches.default;
+
 
 export async function HandleUpload(c: Context): Promise<Response> {
   const formdata = await c.req.formData();
   const uploaded_file = formdata.get("har_file");
-  if (uploaded_file instanceof File) {
-  } else {
+  if (!(uploaded_file instanceof File)) {
     return c.redirect("/upload");
   }
   const har_file_name = uploaded_file.name;
@@ -60,17 +59,27 @@ export async function Start(c: Context): Promise<Response> {
   return JSONResponse(await file.json());
 }
 
-
 export async function SingleEntry(c: Context): Promise<Response> {
-  const file_name = c.get("file");
-  // console.log(`File hash: ${file_name}`)
-  if (!file_name) {
-    return c.notFound();
-  }
-  const file: R2ObjectBody = await c.env.BUCKET.get(file_name);
-  const body = await file.json()
-  const entry_number = (await c.req.json())["entry_id"]
-  return JSONResponse(body["log"]["entries"][entry_number]);
+    const entry_cache =  await caches.open("entry-cache");
+    const entry_number = (await c.req.json())["entry_id"];
+    const file_name = c.get("file");
+    const cache_id = `http://${file_name}/${entry_number}`
+    console.log("Cache ID", cache_id)
+    var response = await entry_cache.match(cache_id)
+    if (response) {
+        console.log("Hit cache")
+        return HandleCachedResponse(response)
+    }
+    // console.log(`File hash: ${file_name}`)
+    if (!file_name) {
+        return c.notFound();
+    }
+    const file: R2ObjectBody = await c.env.BUCKET.get(file_name);
+    const body = await file.json();
+
+    response = JSONResponse(body["log"]["entries"][entry_number], {extra_headers: {"Cache-Control": "max-age=360"}})
+    c.executionCtx.waitUntil(entry_cache.put(cache_id, response.clone()))
+    return response
 }
 
 export async function Logout(c: Context): Promise<Response> {

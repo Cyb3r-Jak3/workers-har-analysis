@@ -1,20 +1,16 @@
-import {
-  getAssetFromKV,
-  NotFoundError,
-  MethodNotAllowedError,
-} from "@cloudflare/kv-asset-handler";
+import { getAssetFromKV, NotFoundError } from "@cloudflare/kv-asset-handler";
 import manifestJSON from "__STATIC_CONTENT_MANIFEST";
 const assetManifest = JSON.parse(manifestJSON);
 import { Hono, Context } from "hono";
 import { HandleCachedResponse } from "./utils";
 import { HandleUpload, Logout, SingleEntry, Start } from "./api";
 import { HandleAuth } from "./auth";
-import { DBStart } from "./tables";
+// import { DBStart } from "./tables";
 
 export interface Env {
   DB: D1Database;
   BUCKET: R2Bucket;
-  __STATIC_CONTENT_MANIFEST: any;
+  __STATIC_CONTENT_MANIFEST: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 const cache = caches.default;
@@ -22,7 +18,7 @@ const app = new Hono<{ Bindings: Env }>();
 
 app.use("/api/auth/*", HandleAuth);
 app.get("/api/auth/start", Start);
-app.post("/api/auth/entry", SingleEntry)
+app.post("/api/auth/entry", SingleEntry);
 app.get("/api/auth/logout", Logout);
 
 app.post("/api/upload", HandleUpload);
@@ -36,8 +32,8 @@ async function GetAsset(c: Context): Promise<Response> {
     return HandleCachedResponse(resp);
   }
   try {
-    let url = new URL(request.url);
-    let pathname = url.pathname;
+    const url = new URL(request.url);
+    const pathname = url.pathname;
     if (!pathname.includes(".") && pathname !== "/") {
       url.pathname = `${pathname}.html`;
       request = new Request(url.toString(), c.req);
@@ -59,7 +55,7 @@ async function GetAsset(c: Context): Promise<Response> {
     return resp;
   } catch (e) {
     if (e instanceof NotFoundError) {
-      let pathname = new URL(c.req.url).pathname;
+      const pathname = new URL(c.req.url).pathname;
       return new Response(`"${pathname}" not found`, {
         status: 404,
         statusText: "not found",

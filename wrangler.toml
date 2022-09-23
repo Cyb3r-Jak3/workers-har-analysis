@@ -2,6 +2,9 @@ name = "workers-har-analysis"
 main = "src/index.ts"
 compatibility_date = "2022-09-19"
 
+routes = [
+	{pattern = "har-analyzer.cyberjake.xyz", custom_domain = true},
+]
 
 [site]
 bucket = "./site"
@@ -13,7 +16,6 @@ preview_bucket_name = 'har-dev'
 
 [[ d1_databases ]]
 binding = "DB"
-database_name = "har"
 database_id = "56e92dff-b79e-4419-aa7c-ff7a64b932c8"
 preview_database_id = "eaf35d1d-b4d7-41ba-a5cc-6a715fb02eb6"
 
