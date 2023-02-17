@@ -1,22 +1,6 @@
 import manifestJSON from '__STATIC_CONTENT_MANIFEST'
 const assetManifest = JSON.parse(manifestJSON)
 import { Env } from '.'
-
-/**
- *
- * @param resp Response that hit cache
- * @returns Response with X-Worker-Cache Header
- */
-export function HandleCachedResponse(resp: Response): Response {
-    const newHeaders = new Headers(resp.headers)
-    newHeaders.set('X-Worker-Cache', 'HIT')
-    return new Response(resp.body, {
-        status: resp.status,
-        statusText: resp.statusText,
-        headers: newHeaders,
-    })
-}
-
 /**
  * Turns the array buffer from crypto into a string. Stolen from stackoverflow
  * @param buffer Crypto Buffer
@@ -38,41 +22,6 @@ export function hex(buffer: ArrayBuffer): string {
     // Join all the hex strings into one
 
     return hexCodes.join('')
-}
-
-interface JSONResponseOptions {
-    status?: number
-    extra_headers?: Record<string, string>
-}
-
-/**
- * Creates a JSON response
- * @param ResponseData Object to turn into JSON data
- * @param options Extra options for
- * @returns JSON Response
- */
-export function JSONResponse(
-    ResponseData: string | unknown,
-    options?: JSONResponseOptions
-): Response {
-    let status
-    if (options === undefined || options.status === undefined) {
-        status = 200
-    } else {
-        status = options.status
-    }
-    const send_headers = new Headers({
-        'content-type': 'application/json; charset=UTF-8',
-    })
-    if (options?.extra_headers) {
-        for (const key of Object.keys(options.extra_headers)) {
-            send_headers.append(key, options.extra_headers[key])
-        }
-    }
-    return new Response(JSON.stringify(ResponseData), {
-        status: status,
-        headers: send_headers,
-    })
 }
 
 export async function GetFileFromKV(

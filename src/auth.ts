@@ -1,7 +1,7 @@
 import { parse } from 'cookie'
 import { GenerateQuery, QueryType } from 'd1-orm'
 import type { Handler } from 'hono'
-import { JSONResponse } from './utils'
+import { JSONResponse } from '@cyb3r-jak3/workers-common'
 
 export const HandleAuth: Handler = async (c, next) => {
     // console.log("Starting auth")
