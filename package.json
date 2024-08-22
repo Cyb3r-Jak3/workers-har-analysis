@@ -26,7 +26,7 @@
         "@cyb3r-jak3/workers-common": "^4.0.1",
         "cookie": "^0.5.0",
         "d1-orm": "^0.7.2",
-        "hono": "^4.2.7",
+        "hono": "^4.5.8",
         "nunjucks": "^3.2.4"
     }
 }
